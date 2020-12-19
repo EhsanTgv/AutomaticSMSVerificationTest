@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.GoogleApiClient
 
 
@@ -16,6 +17,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val client = SmsRetriever.getClient(this)
+
+        val task = client.startSmsRetriever()
+
+        task.addOnSuccessListener {
+            // Successfully started retriever, expect broadcast intent
+            // ...
+        }
+
+        task.addOnFailureListener {
+            // Failed to start retriever, inspect Exception for more details
+            // ...
+        }
     }
 
     private fun requestHint() {
@@ -35,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESOLVE_HINT) {
             if (resultCode == RESULT_OK) {
-                val credential: Credential = data.getParcelableExtra(Credential.EXTRA_KEY)!!
+                val credential: Credential = data!!.getParcelableExtra(Credential.EXTRA_KEY)!!
             }
         }
     }
